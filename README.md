@@ -1,4 +1,4 @@
-# 🚀 MoodSleep Tracker - Desenvolvimento Full Stack
+# 🌙✨ MoodSleep Tracker - Desenvolvimento Full Stack
 
 ## 🎯 Objetivo da Atividade
 
