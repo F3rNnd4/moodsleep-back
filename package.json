@@ -1,14 +1,18 @@
 {
-  "name": "animes-api",
+  "name": "moodsleep-back",
   "version": "1.0.0",
-  "description": "Projeto base de uma API com MVC",
+  "description": "Projeto de acompanhamento de humor e sono usando Node.js, Express e Prisma.",
   "keywords": [
     "nodejs",
     "javascript",
-    "prisma"
+    "prisma",
+    "express",
+    "moodsleep",
+    "api",
+    "backend"
   ],
   "license": "MIT",
-  "author": "Felipe Dev",
+  "author": "F3rNnd4",
   "type": "module",
   "main": "src/server.js",
   "scripts": {

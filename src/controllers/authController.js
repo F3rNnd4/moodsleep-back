@@ -33,7 +33,7 @@ class AuthController {
       }
 
       // Hash da senha
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 6);
 
       // Criar objeto do usuário
       const data = {
@@ -90,7 +90,7 @@ class AuthController {
         },
         process.env.JWT_SECRET,
         {
-          expiresIn: "24h",
+          expiresIn: "60d", // Expira em 60 dias para garantir que o usuário permaneça logado, mas seguro
         }
       );
 

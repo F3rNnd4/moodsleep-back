@@ -11,38 +11,38 @@ async function main() {
   // Criar usuários
   const user1 = await prisma.user.create({
     data: {
-      name: "NBA Legends",
-      email: "nba_legends@example.com",
-      password: "securepassword",
+      name: "Mia Cruz",
+      email: "mia_cruz@example.com",
+      password: "mercyuponourselves",
     },
   });
 
   const user2 = await prisma.user.create({
     data: {
-      name: "Classic Rock",
-      email: "classic_rock@example.com",
-      password: "securepassword",
+      name: "Jade Smith",
+      email: "jade_smith@example.com",
+      password: "youredonefor",
     },
   });
 
   const user3 = await prisma.user.create({
     data: {
-      name: "World Monuments",
-      email: "world_monuments@example.com",
-      password: "securepassword",
+      name: "Rafaela Silva",
+      email: "rafaela_silva@example.com",
+      password: "nolongeryou",
     },
   });
 
   console.log("Usuários criados. Inserindo registros...");
 
-  // Registros para NBA Legends
-  const nbaRecords = await Promise.all([
+  // Registros para Mia Cruz
+  const miaRecords = await Promise.all([
     prisma.register.create({
       data: {
         userId: user1.id,
         moodLevel: 5,
         sleepHours: 7.5,
-        notes: "Me senti ótimo hoje!",
+        notes: "Me senti ótima hoje!",
       },
     }),
     prisma.register.create({
@@ -63,14 +63,14 @@ async function main() {
     }),
   ]);
 
-  // Registros para Classic Rock
-  const rockRecords = await Promise.all([
+  // Registros para Jade Smith
+  const jadeRecords = await Promise.all([
     prisma.register.create({
       data: {
         userId: user2.id,
         moodLevel: 5,
         sleepHours: 7.0,
-        notes: "Me senti inspirado hoje!",
+        notes: "Me senti inspirada hoje!",
       },
     }),
     prisma.register.create({
@@ -91,14 +91,14 @@ async function main() {
     }),
   ]);
 
-  // Registros para World Monuments
-  const monumentRecords = await Promise.all([
+  // Registros para Rafaela Silva
+  const rafaelaRecords = await Promise.all([
     prisma.register.create({
       data: {
         userId: user3.id,
         moodLevel: 5,
         sleepHours: 8.0,
-        notes: "Me senti relaxado hoje!",
+        notes: "Me senti relaxada hoje!",
       },
     }),
     prisma.register.create({
@@ -114,7 +114,7 @@ async function main() {
         userId: user3.id,
         moodLevel: 3,
         sleepHours: 6.0,
-        notes: "Fiquei um pouco estressado.",
+        notes: "Fiquei um pouco estressada.",
       },
     }),
   ]);
