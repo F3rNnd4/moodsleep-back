@@ -22,7 +22,7 @@ Desenvolver uma aplicação web completa (front-end + back-end) demonstrando os 
 
    ```bash
    git clone <URL_DO_REPOSITORIO>
-   cd individual-final-project-back
+   cd moodsleep-back
    ```
 
 2. **📦 Instale as dependências:**
@@ -37,7 +37,7 @@ Desenvolver uma aplicação web completa (front-end + back-end) demonstrando os 
    - Preencha as variáveis necessárias:
 
    ```env
-   PORT=3000
+   PORT=5000
    DATABASE_URL="file:./dev.db"
    JWT_SECRET="seu_jwt_secret_aqui"
    ```
