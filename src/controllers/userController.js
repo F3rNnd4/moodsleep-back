@@ -1,8 +1,7 @@
 import UserModel from "../models/userModel.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
-class AuthController {
+class UserController {
   // Listar todos os usuários
   async getAllUsers(req, res) {
     try {
@@ -27,14 +26,16 @@ class AuthController {
       }
 
       // Validação de formato de email
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex simples para validar email
       if (!emailRegex.test(email)) {
         return res.status(400).json({ error: "Formato de email inválido!" });
       }
 
       // Validação de senha mínima
       if (password.length < 6) {
-        return res.status(400).json({ error: "A senha deve ter pelo menos 6 caracteres!" });
+        return res
+          .status(400)
+          .json({ error: "A senha deve ter pelo menos 6 caracteres!" });
       }
 
       // Verificar se o usuário já existe
@@ -66,59 +67,6 @@ class AuthController {
     }
   }
 
-  async login(req, res) {
-    try {
-      const { email, password } = req.body;
-
-      // Validação básica
-      if (!email || !password) {
-        return res
-          .status(400)
-          .json({ error: "Os campos email e senha são obrigatórios!" });
-      }
-
-      // Verificar se o usuário existe
-      const userExists = await UserModel.findByEmail(email);
-      if (!userExists) {
-        return res.status(401).json({ error: "Credenciais inválidas!" });
-      }
-
-      // Verificar senha
-      const isPasswordValid = await bcrypt.compare(
-        password,
-        userExists.password
-      );
-      if (!isPasswordValid) {
-        return res.status(401).json({ error: "Credenciais inválidas!" });
-      }
-
-      // Gerar Token JWT
-      const token = jwt.sign(
-        {
-          id: userExists.id,
-          name: userExists.name,
-          email: userExists.email,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "60d", // Expira em 60 dias para garantir que o usuário permaneça logado, mas seguro
-        }
-      );
-
-      return res.json({
-        message: "Login realizado com sucesso!",
-        token,
-        user: {
-          id: userExists.id,
-          name: userExists.name,
-          email: userExists.email
-        }
-      });
-    } catch (error) {
-      console.error("Erro ao fazer login: ", error);
-      res.status(500).json({ error: "Erro ao fazer login!" });
-    }
-  }
 }
 
-export default new AuthController();
+export default new UserController();

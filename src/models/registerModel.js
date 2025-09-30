@@ -3,14 +3,8 @@ import prisma from "../../prisma/prisma.js";
 class RegisterModel {
   // Obter todos os registros
   async findAll() {
-    const registers = await prisma.register.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    // console.log(registers);
-
+    const registers = await prisma.register.findMany({});
+    
     return registers;
   }
 

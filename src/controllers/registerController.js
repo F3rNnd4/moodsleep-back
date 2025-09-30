@@ -4,8 +4,7 @@ class RegisterController {
   // GET /api/registers
   async getAllRegisters(req, res) {
     try {
-      const userId = req.userId; // Vem do middleware de auth
-      const registers = await RegisterModel.findByUserId(userId);
+      const registers = await RegisterModel.findAll();
       res.json(registers);
     } catch (error) {
       console.error("Erro ao buscar registros:", error);
@@ -41,27 +40,26 @@ class RegisterController {
   async createRegister(req, res) {
     try {
       // Validação básica
-      const { date, moodLevel, sleepHours, notes } = req.body;
-      const userId = req.userId; // Vem do middleware de auth
+      const { userId, date, moodLevel, sleepHours, notes } = req.body;
 
       // Verifica se os campos obrigatórios foram fornecidos
       if (!date || !moodLevel || !sleepHours) {
         return res
           .status(400)
-          .json({ error: "Date, moodLevel e sleepHours são obrigatórios" });
+          .json({ error: "Data, nível de humor e horas de sono são obrigatórios" });
       }
 
       // Validações específicas
       if (moodLevel < 1 || moodLevel > 5) {
         return res
           .status(400)
-          .json({ error: "moodLevel deve ser entre 1 e 5" });
+          .json({ error: "Nível de humor deve ser entre 1 e 5" });
       }
 
       if (sleepHours < 0 || sleepHours > 24) {
         return res
           .status(400)
-          .json({ error: "sleepHours deve ser entre 0 e 24" });
+          .json({ error: "Horas de sono devem ser entre 0 e 24" });
       }
 
       // Criar o novo registro
@@ -95,13 +93,13 @@ class RegisterController {
       if (moodLevel !== undefined && (moodLevel < 1 || moodLevel > 5)) {
         return res
           .status(400)
-          .json({ error: "moodLevel deve ser entre 1 e 5" });
+          .json({ error: "Nível de humor deve ser entre 1 e 5" });
       }
 
       if (sleepHours !== undefined && (sleepHours < 0 || sleepHours > 24)) {
         return res
           .status(400)
-          .json({ error: "sleepHours deve ser entre 0 e 24" });
+          .json({ error: "Horas de sono devem ser entre 0 e 24" });
       }
 
       // Atualizar o registro
