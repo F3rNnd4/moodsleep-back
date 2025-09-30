@@ -25,8 +25,23 @@ class RegisterModel {
     return register;
   }
 
+  // Obter registros por usuário
+  async findByUserId(userId) {
+    const registers = await prisma.register.findMany({
+      where: {
+        userId: Number(userId),
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return registers;
+  }
+
   // Criar um novo registro
   async create(
+    userId,
     date,
     moodLevel,
     sleepHours,
@@ -34,9 +49,10 @@ class RegisterModel {
   ) {
     const newRegister = await prisma.register.create({
       data: {
-        date,
-        moodLevel,
-        sleepHours,
+        userId: Number(userId),
+        date: new Date(date),
+        moodLevel: Number(moodLevel),
+        sleepHours: Number(sleepHours),
         notes
       },
     });
@@ -47,6 +63,7 @@ class RegisterModel {
   // Atualizar um registro
   async update(
     id,
+    userId,
     date,
     moodLevel,
     sleepHours,
@@ -58,16 +75,21 @@ class RegisterModel {
       return null;
     }
 
+    // Verificar se o registro pertence ao usuário
+    if (register.userId !== Number(userId)) {
+      return null;
+    }
+
     // Atualize o registro existente com os novos dados
     const data = {};
     if (date !== undefined) {
-      data.date = date;
+      data.date = new Date(date);
     }
     if (moodLevel !== undefined) {
-      data.moodLevel = moodLevel;
+      data.moodLevel = Number(moodLevel);
     }
     if (sleepHours !== undefined) {
-      data.sleepHours = sleepHours;
+      data.sleepHours = Number(sleepHours);
     }
     if (notes !== undefined) {
       data.notes = notes;
@@ -84,10 +106,15 @@ class RegisterModel {
   }
 
   // Remover um registro
-  async delete(id) {
+  async delete(id, userId) {
     const register = await this.findById(id);
 
     if (!register) {
+      return null;
+    }
+
+    // Verificar se o registro pertence ao usuário
+    if (register.userId !== Number(userId)) {
       return null;
     }
 

@@ -4,8 +4,8 @@ import RegisterController from "../controllers/registerController.js";
 const registerRouter = express.Router();
 
 // Rotas de Registro
-// POST /api/register - Registrar um novo usuário
-registerRouter.post("/", RegisterController.createRegister);
+// GET /api/register - Listar todos os registros do usuário
+registerRouter.get("/", RegisterController.getAllRegisters);
 
 // GET /api/register/:id - Obter um registro pelo ID
 registerRouter.get("/:id", RegisterController.getRegisterById);

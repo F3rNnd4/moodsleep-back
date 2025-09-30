@@ -26,6 +26,17 @@ class AuthController {
           .json({ error: "Os campos nome, email e senha são obrigatórios!" });
       }
 
+      // Validação de formato de email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Formato de email inválido!" });
+      }
+
+      // Validação de senha mínima
+      if (password.length < 6) {
+        return res.status(400).json({ error: "A senha deve ter pelo menos 6 caracteres!" });
+      }
+
       // Verificar se o usuário já existe
       const userExists = await UserModel.findByEmail(email);
       if (userExists) {
@@ -97,7 +108,11 @@ class AuthController {
       return res.json({
         message: "Login realizado com sucesso!",
         token,
-        userExists,
+        user: {
+          id: userExists.id,
+          name: userExists.name,
+          email: userExists.email
+        }
       });
     } catch (error) {
       console.error("Erro ao fazer login: ", error);

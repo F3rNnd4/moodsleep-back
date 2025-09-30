@@ -4,7 +4,8 @@ class RegisterController {
   // GET /api/registers
   async getAllRegisters(req, res) {
     try {
-      const registers = await RegisterModel.findAll();
+      const userId = req.userId; // Vem do middleware de auth
+      const registers = await RegisterModel.findByUserId(userId);
       res.json(registers);
     } catch (error) {
       console.error("Erro ao buscar registros:", error);
@@ -16,11 +17,17 @@ class RegisterController {
   async getRegisterById(req, res) {
     try {
       const { id } = req.params;
+      const userId = req.userId;
 
       const register = await RegisterModel.findById(id);
 
       if (!register) {
         return res.status(404).json({ error: "Registro não encontrado" });
+      }
+
+      // Verificar se o registro pertence ao usuário
+      if (register.userId !== userId) {
+        return res.status(403).json({ error: "Acesso negado" });
       }
 
       res.json(register);
@@ -35,16 +42,31 @@ class RegisterController {
     try {
       // Validação básica
       const { date, moodLevel, sleepHours, notes } = req.body;
+      const userId = req.userId; // Vem do middleware de auth
 
-      // Verifica se todos os campos foram fornecidos
-      if (!date || !moodLevel || !sleepHours || !notes) {
+      // Verifica se os campos obrigatórios foram fornecidos
+      if (!date || !moodLevel || !sleepHours) {
         return res
           .status(400)
-          .json({ error: "Todos os campos são obrigatórios" });
+          .json({ error: "Date, moodLevel e sleepHours são obrigatórios" });
+      }
+
+      // Validações específicas
+      if (moodLevel < 1 || moodLevel > 5) {
+        return res
+          .status(400)
+          .json({ error: "moodLevel deve ser entre 1 e 5" });
+      }
+
+      if (sleepHours < 0 || sleepHours > 24) {
+        return res
+          .status(400)
+          .json({ error: "sleepHours deve ser entre 0 e 24" });
       }
 
       // Criar o novo registro
       const newRegister = await RegisterModel.create(
+        userId,
         date,
         moodLevel,
         sleepHours,
@@ -66,23 +88,26 @@ class RegisterController {
   async updateRegister(req, res) {
     try {
       const { id } = req.params;
-      const {
-        date,
-        moodLevel,
-        sleepHours,
-        notes
-      } = req.body;
+      const { date, moodLevel, sleepHours, notes } = req.body;
+      const userId = req.userId;
 
-      // Validação básica
-      if (!date || !moodLevel || !sleepHours || !notes) {
+      // Validação básica - apenas campos que foram enviados
+      if (moodLevel !== undefined && (moodLevel < 1 || moodLevel > 5)) {
         return res
           .status(400)
-          .json({ error: "Todos os campos são obrigatórios" });
+          .json({ error: "moodLevel deve ser entre 1 e 5" });
+      }
+
+      if (sleepHours !== undefined && (sleepHours < 0 || sleepHours > 24)) {
+        return res
+          .status(400)
+          .json({ error: "sleepHours deve ser entre 0 e 24" });
       }
 
       // Atualizar o registro
       const updatedRegister = await RegisterModel.update(
         id,
+        userId,
         date,
         moodLevel,
         sleepHours,
@@ -90,7 +115,7 @@ class RegisterController {
       );
 
       if (!updatedRegister) {
-        return res.status(404).json({ error: "Registro não encontrado" });
+        return res.status(404).json({ error: "Registro não encontrado ou acesso negado" });
       }
 
       res.json(updatedRegister);
@@ -104,12 +129,13 @@ class RegisterController {
   async deleteRegister(req, res) {
     try {
       const { id } = req.params;
+      const userId = req.userId;
 
       // Remover o registro
-      const result = await RegisterModel.delete(id);
+      const result = await RegisterModel.delete(id, userId);
 
       if (!result) {
-        return res.status(404).json({ error: "Registro não encontrado" });
+        return res.status(404).json({ error: "Registro não encontrado ou acesso negado" });
       }
 
       res.status(200).json({ message: "Registro removido com sucesso" });
