@@ -1,10 +1,13 @@
 import prisma from "../../prisma/prisma.js";
 
 class RegisterModel {
-  // Obter todos os registros
+  // Obter todos os registros ordenados por data (mais recente primeiro)
   async findAll() {
-    const registers = await prisma.register.findMany({});
-    
+    const registers = await prisma.register.findMany({
+      orderBy: {
+        date: "desc",
+      },
+    });
     return registers;
   }
 
@@ -15,66 +18,31 @@ class RegisterModel {
         id: Number(id),
       },
     });
-
     return register;
   }
 
-  // Obter registros por usuário
-  async findByUserId(userId) {
-    const registers = await prisma.register.findMany({
-      where: {
-        userId: Number(userId),
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    return registers;
-  }
-
   // Criar um novo registro
-  async create(
-    userId,
-    date,
-    moodLevel,
-    sleepHours,
-    notes
-  ) {
+  async create(date, moodLevel, sleepHours, notes) {
     const newRegister = await prisma.register.create({
       data: {
-        userId: Number(userId),
         date: new Date(date),
         moodLevel: Number(moodLevel),
         sleepHours: Number(sleepHours),
-        notes
+        notes: notes || null,
       },
     });
-
     return newRegister;
   }
 
   // Atualizar um registro
-  async update(
-    id,
-    userId,
-    date,
-    moodLevel,
-    sleepHours,
-    notes
-  ) {
+  async update(id, date, moodLevel, sleepHours, notes) {
     const register = await this.findById(id);
 
     if (!register) {
       return null;
     }
 
-    // Verificar se o registro pertence ao usuário
-    if (register.userId !== Number(userId)) {
-      return null;
-    }
-
-    // Atualize o registro existente com os novos dados
+    // Preparar dados para atualização
     const data = {};
     if (date !== undefined) {
       data.date = new Date(date);
@@ -100,15 +68,10 @@ class RegisterModel {
   }
 
   // Remover um registro
-  async delete(id, userId) {
+  async delete(id) {
     const register = await this.findById(id);
 
     if (!register) {
-      return null;
-    }
-
-    // Verificar se o registro pertence ao usuário
-    if (register.userId !== Number(userId)) {
       return null;
     }
 
